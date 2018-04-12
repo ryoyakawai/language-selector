@@ -44,7 +44,6 @@
        border-bottom: var(--switcher-link-selected-border-bottom, 0px);
        border-radius: var(--switcher-link-selected-border-radius, 2px);
      }
-
     </style>
     <div id="langs-navigator"></div>
     <div id="content"></div>
@@ -108,10 +107,6 @@
            if(this.switcher === true) {
                this.prpdLangs = this.langs.split(':');
                
-               for (let elem of elems) {
-                   if(this.deflang) elem.deflang = this.deflang;
-               }
-
                for(const prpdLang of this.prpdLangs) {
                    let href = document.createElement('a');
                    href.id = prpdLang.toLowerCase();
@@ -130,22 +125,35 @@
                }
            } else
            if(this.switcher === false) {
+               let elems = document.getElementsByTagName(MultiLanguages.is);
+               for(let elem of elems) {
+                   if(elem.switcher === true) {
+                       this.deflang = elem.deflang;
+                       break;
+                   }
+               }
+               
                document.body.addEventListener('switch-lang', switchEventHandler.bind(this));
                function switchEventHandler( event ) {
                    let id = event.detail.id;
                    if( id ) {
-                       this.switchSection.bind(this)(event, id);
+                       this.switchSection.bind(this)(id);
                        this._getSelectedSwitcher.bind(this)(event);
 	                 }
                }
-
+               this.switchSection( this.deflang );
            }
-           document.body.dispatchEvent(new CustomEvent('switch-lang', { detail : {id: this.deflang} } ));
        }
        
-       switchSection ( event, id ) {
+       switchSection ( id ) {
            let shadowR = this.shadowRoot;
-           shadowR.querySelector('#content').innerHTML = this.querySelector('#'+id).innerHTML;
+           let timerId = setInterval(_ => {
+               if( this.querySelector('#' + id) != null) {
+                   shadowR.querySelector('#content').innerHTML = this.querySelector('#'+id).innerHTML;
+                   clearInterval(timerId);
+               }
+           }, 100);
+
        }
 
        _getSelectedSwitcher ( event ) {
@@ -182,6 +190,7 @@
        attributeChanged () {
            super.attributeChanged();
        }
+
        attributeChangedCallback (name, old, value) {
            super.attributeChangedCallback(name, old, value);
        }
