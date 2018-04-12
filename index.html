@@ -1,0 +1,35 @@
+<html>
+  <head>
+    <title></title>
+    <style>
+     body {
+       font-family: serif;
+     }
+     language-selector {
+       --switcher-link-text-color: rgba(34,34,34,0.8);
+       --switcher-link-border-width: 0px;
+       --switcher-link-font: 400 1rem arial;
+       --switcher-link-margin: 4px 10px 20px 4px; 
+     }
+    </style>
+  </head>
+  <body>
+    <link rel="import" href="language-selector.html">
+    
+    <p><language-selector deflang="ja" langs="en:ja" switcher></language-selector></p>
+
+    <language-selector>
+      <span id="en">English1</span>
+      <span id="ja">日本語1</span>
+    </language-selector>
+
+    <language-selector langs="en:ja">
+      <span id="en">English2</span>
+      <span id="ja">日本語2</span>
+    </language-selector>
+
+
+
+
+  </body>
+</html>

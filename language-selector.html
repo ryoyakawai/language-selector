@@ -1,0 +1,193 @@
+<!--
+     Copyright 2018 Ryoya Kawai
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+-->
+<link rel="import"  href="https://polygit.org/components/polymer/polymer-element.html">
+
+<dom-module id="language-selector">
+  
+  <template>
+    <style>
+     :host {
+       display: block;
+       font-family: arial;
+     }
+     .switcher-link {
+       padding: var(--switcher-link-padding, 3px);
+       color: var(--switcher-link-color, rgba(34,34,34,0.8));
+       font: var(--switcher-link-font, 400 11px system-ui);
+       cursor: var(--switcher-link-cursor, pointer);
+       margin: var(--switcher-link-margin, 1px);
+       border-bottom:  var(--switcher-link-border-bottom, 1px dotted rgba(162,162,162,0.8));
+       margin: var(--switcher-link-margin, 4px 4px);
+     }
+     .switcher-link:hover {
+       border-bottom:  var(--switcher-link-border-bottom-hover, 1px solid rgba(162,162,162,0.8));
+       color: var(--switcher-link-hover, rgba(0,0,0,0,0.8));
+     }
+     .switcher-link-selected {
+       padding: var(--switcher-link-selected-padding, 5px 3px);
+       color: var(--switcher-link-selected-color, rgba(34,34,34,0.8));
+       background-color: var(--switcher-link-selected-background-color, rgba(180,180,180,0.8));
+       border-bottom: var(--switcher-link-selected-border-bottom, 0px);
+       border-radius: var(--switcher-link-selected-border-radius, 2px);
+     }
+
+    </style>
+    <div id="langs-navigator"></div>
+    <div id="content"></div>
+  </template>
+  
+  <script type="text/javascript">
+   class MultiLanguages extends Polymer.Element {
+       
+       static get is () { return "language-selector"; }
+
+       static get template () {
+           let templateContents = Polymer.DomModule.import(this.is, 'template');
+           return templateContents;
+       }
+
+       static get LANG() {
+           return Object.assign(super.LANG || {}, {
+               en : 'English',
+               ja : '日本語'
+           });
+       }
+
+       static get properties() {
+           return {
+               deflang: {
+                   type: String,
+                   notify: true,
+                   reflectToAttribute: true
+               },
+               langs: {
+                   type: String,
+                   notify: true,
+               },
+               switcher: {
+                   type: Boolean,
+                   value: false,
+                   notify: true,
+                   reflectToAttribute: true
+               },
+               uniqid: {
+                   type: String,
+                   value: '',
+                   notify: true,
+                   reflectToAttribute: true
+               }
+           }
+       }
+       
+       ready () {
+           super.ready();
+           console.log(MultiLanguages.is + ' is ready!');
+
+           let shadowR = this.shadowRoot;
+           let elems = document.getElementsByTagName('language-selector');
+           let uniqueId = this._generateUniqueId();
+
+           for (const elem of elems) {
+               elem.uniqid = uniqueId;
+           }
+           
+           if(this.switcher === true) {
+               this.prpdLangs = this.langs.split(':');
+               
+               for (let elem of elems) {
+                   if(this.deflang) elem.deflang = this.deflang;
+               }
+
+               for(const prpdLang of this.prpdLangs) {
+                   let href = document.createElement('a');
+                   href.id = prpdLang.toLowerCase();
+                   href.innerHTML = MultiLanguages.LANG[prpdLang.toLowerCase()];
+                   href.classList.add('switcher-link');
+                   if(this.deflang.toLowerCase() == prpdLang.toLowerCase()) {
+                       href.classList.add('switcher-link-selected');
+                   }
+                   shadowR.querySelector('#langs-navigator').appendChild(href);
+                   href.addEventListener('mousedown', swHandler.bind(this));
+                   function swHandler( event ) {
+                       let id = event.target.id;
+                       document.body.dispatchEvent(new CustomEvent('switch-lang', { detail : {id: id} } ));
+                       this._getSelectedSwitcher(event);
+                   }
+               }
+           } else
+           if(this.switcher === false) {
+               document.body.addEventListener('switch-lang', switchEventHandler.bind(this));
+               function switchEventHandler( event ) {
+                   let id = event.detail.id;
+                   if( id ) {
+                       this.switchSection.bind(this)(event, id);
+                       this._getSelectedSwitcher.bind(this)(event);
+	                 }
+               }
+
+           }
+           document.body.dispatchEvent(new CustomEvent('switch-lang', { detail : {id: this.deflang} } ));
+       }
+       
+       switchSection ( event, id ) {
+           let shadowR = this.shadowRoot;
+           shadowR.querySelector('#content').innerHTML = this.querySelector('#'+id).innerHTML;
+       }
+
+       _getSelectedSwitcher ( event ) {
+           let elems = (event.target.parentNode).getElementsByTagName('a');
+           for(let elem of elems) {
+               elem.classList.remove('switcher-link-selected');
+           }
+           event.target.classList.add('switcher-link-selected');
+       }
+       _generateUniqueId () {
+           return '_' + Math.random().toString(36).substr(2, 14);
+       }
+
+       _convertLangText ( id ) {
+           return this.langText[id];
+       }
+       
+       connectedCallback () {
+           super.connectedCallback();
+       }
+
+       created () {
+           super.created();
+       }
+
+       disconnectedCallback () {
+           super.disconnectedCallback();
+       }
+       
+       detached () {
+           super.detached();
+       }
+
+       attributeChanged () {
+           super.attributeChanged();
+       }
+       attributeChangedCallback (name, old, value) {
+           super.attributeChangedCallback(name, old, value);
+       }
+
+   }
+   customElements.define(MultiLanguages.is, MultiLanguages);
+  </script>
+
+</dom-module>
