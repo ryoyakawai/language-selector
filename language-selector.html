@@ -22,7 +22,7 @@
     <style>
      :host {
        display: block;
-       font-family: arial;
+       font-family: var(--host-font-family, arial);
      }
      .switcher-link {
        padding: var(--switcher-link-padding, 3px);
@@ -148,9 +148,10 @@
        switchSection ( id ) {
            let shadowR = this.shadowRoot;
            let timerId = setInterval(_ => {
-               if( this.querySelector('#' + id) != null) {
-                   shadowR.querySelector('#content').innerHTML = this.querySelector('#'+id).innerHTML;
+               if( this.querySelector('.translation[lang=' + id + ']') != null) {
+                   shadowR.querySelector('#content').innerHTML = this.querySelector('.translation[lang=' + id + ']').innerHTML;
                    clearInterval(timerId);
+                   timerId = null;
                }
            }, 100);
 

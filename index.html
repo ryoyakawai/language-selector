@@ -3,23 +3,54 @@
     <title></title>
     <style>
      body {
-       font-family: serif;
+       font-family: arial;
+       width: 90%;
+       margin: 10px 20px;
      }
      language-selector {
        --switcher-link-text-color: rgba(34,34,34,0.8);
        --switcher-link-border-width: 0px;
-       --switcher-link-font: 400 1rem arial;
+       --switcher-link-font: 200 0.8rem arial;
        --switcher-link-margin: 4px 10px 20px 4px; 
+     }
+     .translation {
+       visibility: hidden;
+       display: none;
      }
     </style>
   </head>
   <body>
+    <script src="https://polygit.org/components/webcomponentsjs/webcomponents-loader.js"></script>
     <link rel="import" href="language-selector.html">
     
     <p><language-selector deflang="ja" langs="en:ja" switcher></language-selector></p>
+    <br>
 
     <language-selector>
-      <span id="ja">
+      <span class="translation" lang="ja">
+        <b>[日本語]</b>
+      </span>
+      <span class="translation" lang="en">
+        <b>[English]</b>
+      </span>
+    </language-selector>
+
+    <language-selector>
+      <span class="translation" lang="ja">
+        日本語ページです。ここに日本語でページのコンテンツを書いていきます。<br>
+        画像、動画等の言語に依存しないであろうコンテンツは2度書く必要はありません。
+      </span>
+      <span class="translation" lang="en">
+        This is the page in English. Write page content here in English.<br>
+        The contents those are not making difference depending on language does not need to write twice.
+      </span>
+    </language-selector>
+
+    <hr noshade style="border: 0; border-bottom: 1px dashed #ccc; background: #999;">
+
+    <p><b>&lt;Sample&gt;</b></p>
+    <language-selector>
+      <span class="translation" lang="ja">
         Webブラウザは音楽アプリケーションのプラットフォームの1つになっています。それらを支えるのが Web Audio API、Web MIDI API です。
 
         <ul>
@@ -27,7 +58,7 @@
           <li> <b>Web MIDI API</b>: ブラウザと外部MIDI機器との接続を可能にしています。</li>
         </ul>
       </span>
-      <span id="en">
+      <span class="translation" lang="en">
         Web Browser is becoming a music application’s platform. That platform consists from two APIs such as Web Audio API and Web MIDI API.
 
         <ul>
